@@ -17,15 +17,14 @@ mat_Pyronic_RedATeam = np.linalg.inv(mat_Pyronic_RedATeam)
 
 
 # edit it #########################
-folder_name = '0925'
-# save_folder_name = 'folder_name/result'
-maximum_T = 5
+folder_name = ''  # the name of folder containing images
+maximum_T = None
 matrix = mat_ATeam_RedATeam  # , mat_Pyronic_RedATeam or else
 subtract_background = True
-subtract_background_size = 10
+subtract_background_size = None
 #
-do_median_blur = 1
-median_filter_size = 5
+do_median_blur = None
+median_filter_size = None
 ###################################
 
 
@@ -49,6 +48,7 @@ def max_contrast_8bit(src):
     return np.int64((src - min_intensity) / (max_intensity - min_intensity) * 255)
 
 
+# mouse event to define the center of background region
 def mouse_event_1(event, x, y, flags, param):
     global image_show, image_raw, x_temp, y_temp, center_of_background
     if event == cv2.EVENT_LBUTTONUP:
@@ -60,6 +60,8 @@ def mouse_event_1(event, x, y, flags, param):
         y_temp = y
 
 
+# this program was designed to process the default raw data output of FV1000, Olympus, multi-channel time lapse mode
+# for example, image of second channel at t=12 has a name: name_of_experiment_C002T012.tif
 file_name_list = os.listdir(folder_name)
 address_list = [['*', '*', '*', '*'] for _ in range(maximum_T)]
 for file_name in file_name_list:
@@ -80,6 +82,7 @@ for i in range(maximum_T):
     image_ch3 = np.int64(cv2.imread(folder_name + '/' + address_list[i][2], -1))
     image_ch4 = np.int64(cv2.imread(folder_name + '/' + address_list[i][3], -1))
     #
+    # get background region
     if subtract_background is True and i == 0:
         image_raw = np.uint8(max_contrast_8bit(image_ch1))
         image_show = image_raw.copy()
@@ -123,6 +126,7 @@ for i in range(maximum_T):
     result_2.append(Im.fromarray(np.uint16(image_processed[:, :, 1])))
     result_3.append(Im.fromarray(np.uint16(image_processed[:, :, 2])))
     result_4.append(Im.fromarray(np.uint16(image_processed[:, :, 3])))
+# results of linear unmixing are generated as multi-tif for analysis using AQUACOSMOS or FV1000 Viewer
 result_1[0].save(folder_name + '/result.tif', save_all=True, append_images=result_1[1:])
 result_2[0].save(folder_name + '/result.tif', save_all=True, append_images=result_2[1:])
 result_3[0].save(folder_name + '/result.tif', save_all=True, append_images=result_3[1:])
