@@ -4,11 +4,11 @@ import pandas as pd
 from PIL import Image as Im
 
 
-address_read = '210518/210427-3'
+address_read = ''  # should be the same address inputed in spatial_analysis_mitoMask.py
 address_save = 'result.csv'
 #
 count = 0
-mask_tif = Im.open(address_read + '/mitoMask.tif')
+mask_tif = Im.open(address_read + '/mitoMask.tif')  # mitoMask should be generated using spatial_analysis_mitoMask.py
 mask_rois = []
 while True:
     try:
