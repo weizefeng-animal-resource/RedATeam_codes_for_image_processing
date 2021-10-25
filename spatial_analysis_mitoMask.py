@@ -8,12 +8,17 @@ address_read = ''
 address_save = address_read + '/mitoMask_del.tif'
 address_save_cell_roi = address_read + '/roi_cell{0}_del.tif'
 #
+# this program is designed to analyze the default output of FV1000 Viewer, Olympus
+# time-lapse images from four channels are saved as multi-tif format, respectively
 video_c = Im.open(address_read + '/result_CFP.tif')
 video_y = Im.open(address_read + '/result_YFP.tif')
 video_o = Im.open(address_read + '/result_OFP.tif')
 video_r = Im.open(address_read + '/result_RFP.tif')
 #
-# generate mask images 
+# mitochondria regions were decided basing on the intensity of mito-ATeam using Otsu thresholding
+# mask images were generated basing on the average distance from mitochondria
+# for exaple, if the distance from one pixel to mitochondria was 4.24(dx=3, dy=3) at t=0, 5(dx=3, dy=4) at t=1, 4.24(dx=3, dy=3) at t=2 and the total T was 3
+# the distance of this pixel from mitochondria was decided as "between 4 and 5" (yellow in the mask image) 
 mask_rois = []
 for index in range(video_o.n_frames):
     print(index)
